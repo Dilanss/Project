@@ -11,11 +11,9 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'login'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-
 mysql = MySQL(app)
 
 # Rutas y funciones para la primera aplicación
-
 # Ruta para cuando se inicialice el programa se inicie desde el index.html
 @app.route('/')
 def home():
@@ -52,22 +50,22 @@ def login():
 # Funcion para redirigir al Administrador.html
 @app.route('/admin')
 def admin():
-    return render_template("Administrador.html")
+    return render_template("Administrador.html", nombre=session.get('nombre'))
 
 # Redireccion al template del empleado
 @app.route('/Empleado')
 def Empleado():
-    return render_template("Empleado.html")
+    return render_template("Empleado.html", nombre=session.get('nombre'))
 
 # Redireccion al template de cliente
 @app.route('/Cliente')
 def Cliente():
-    return render_template("Cliente.html")
+    return render_template("Cliente.html", nombre=session.get('nombre'))
 
 # Redireccion al template de registrar empleado
 @app.route('/Redirigir_Empleado')
 def Redirigir_Empleado():
-    return render_template("Registrar_Empleado.html")
+    return render_template("Registrar_Empleado.html", nombre=session.get('nombre'))
 
 #Redirigir al template de Citas.html
 @app.route('/Citas')
@@ -93,15 +91,15 @@ def Citas():
 
     cursor.close()
 
-    return render_template("Citas.html", nombres_servicios=nombres_servicios, empleados_servicios=empleados_servicios, citas=citas)
+    return render_template("Citas.html", nombres_servicios=nombres_servicios, empleados_servicios=empleados_servicios, citas=citas, nombre=session.get('nombre'))
 
-# Funcion de olvidar contraseña
+# Función para redirigir al olvidar contraseña ademas de validar si el correo existe con la otra funcion def 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
     error = None
     if request.method == 'POST':
         user_email = request.form['txtCorreo']
-
+            
         if is_email_registered(user_email):
             session['reset_email'] = user_email
             return redirect(url_for('newpassword'))
@@ -109,23 +107,21 @@ def forgot():
             error = 'Correo no registrado. Por favor, inténtalo de nuevo o regístrate.'
     return render_template('forgot.html', error=error)
 
-# Funcion para redirigir al olvidar contraseña
+def is_email_registered(user_email):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE correo = %s", (user_email,))
+    user = cur.fetchone()
+    cur.close()
+    return user is not None
+# Fin de la funcion para verificar que el correo existe
+
+# Función para cerrar sesión
 @app.route('/logout')
 def logout():
     session.clear()  
-    return redirect(url_for('home'))  
+    return redirect(url_for('home'))
 
-def is_email_registered(correo):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM usuarios WHERE correo = %s", (correo,))
-    account = cur.fetchone()
-    cur.close()
-    if account:
-        return True
-    else:
-        return False
-
-# Funcion para el template de la nueva contraseña 
+# Función para el template de la nueva contraseña 
 @app.route('/newpassword', methods=['GET', 'POST'])
 def newpassword():
     error = None
@@ -143,12 +139,12 @@ def newpassword():
             return redirect(url_for('home'))
     return render_template('newpassword.html', error=error)
 
-# Funcion para redirigir al registro.html
+# Función para redirigir al registro.html
 @app.route('/registro')
 def registro():
     return render_template("registro.html")
 
-# Funcion para crear el registro desde el template del registro
+# Función para crear el registro desde el template del registro
 @app.route('/crear-registro', methods=["GET", "POST"])
 def crear_registro():
     if request.method == "POST":
@@ -167,7 +163,7 @@ def crear_registro():
     else:
         pass
 
-# Funcion para crear Empleados
+# Función para crear Empleados
 @app.route('/Registrar_Empleado', methods=["GET", "POST"])
 def Registrar_Empleado():
     if request.method == "POST":
@@ -182,29 +178,25 @@ def Registrar_Empleado():
                     (correo, password, nombre, apellido, telefono, 2))
         mysql.connection.commit()
         cur.close()
-        return redirect(url_for('Redirigir_Empleado'))  
-    return render_template("Registrar_Empleado.html")
+        return redirect(url_for('Redirigir_Empleado'), nombre=session.get('nombre'))  
+    else:
+        #Listar empleado en la tabla
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM usuarios WHERE id_rol = 2")
+        empleados_data = cur.fetchall()
+        cur.close()
+        return render_template("Registrar_Empleado.html", empleados=empleados_data, nombre=session.get('nombre'))
 
-# Funcion para mostrar datos de todos los empleado en en Registrar_Empleado.html:
-@app.route('/ver_empleados')
-def ver_empleados():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM usuarios WHERE id_rol = 2")
-    empleados_data = cur.fetchall()
-    cur.close()
-    return render_template("Registrar_Empleado.html", empleados=empleados_data)
-
-# Rutas y funciones para (Inventario)
-# Funcion del inventario para seleccionar los productos y los campos
+# Función del inventario para seleccionar los productos y los campos
 @app.route('/inventario')
 def inventario():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM productos")
     productos_data = cur.fetchall()
     cur.close()
-    return render_template('inventario.html', productos=productos_data)
+    return render_template('inventario.html', productos=productos_data, nombre=session.get('nombre'))
 
-# Funcion para insertar un nuevo producto
+# Función para insertar un nuevo producto
 @app.route('/insert', methods=['POST'])
 def insert():
     if request.method == "POST":
@@ -219,9 +211,9 @@ def insert():
         cur.execute("INSERT INTO productos (Nombre, Cantidad, Marca, Precio, Descripcion, Fecha_vencimiento) VALUES (%s, %s, %s, %s, %s, %s)", 
                     (Nombre, Cantidad, Marca, Precio, Descripcion, Fecha_vencimiento))
         mysql.connection.commit()
-        return redirect(url_for('inventario'))
+        return redirect(url_for('inventario', nombre=session.get('nombre')))
 
-# Funcion de eliminar el producto
+# Función para eliminar el producto
 @app.route('/delete/<string:Id>', methods=['GET'])
 def delete(Id):
     try:
@@ -246,9 +238,9 @@ def Delete_Empleado(id):
         flash("Error al eliminar el empleado: " + str(e))
     finally:
         cur.close()
-    return redirect(url_for('Redirigir_Empleado'))
+    return redirect(url_for('Redirigir_Empleado', nombre=session.get('nombre')))
 
-# Funcion para actualizar un producto
+# Función para actualizar un producto
 @app.route('/update', methods=['POST', 'GET'])
 def update():
     if request.method == 'POST':
@@ -268,14 +260,14 @@ def update():
             
             mysql.connection.commit()
             flash("Actualizado con éxito")
-            return redirect(url_for('inventario'))
+            return redirect(url_for('inventario', nombre=session.get('nombre')))
         except Exception as e:
             flash(f"Error al actualizar: {str(e)}")
         finally:
             cur.close()
-    return render_template('inventario.html')
+    return render_template('inventario.html', nombre=session.get('nombre'))
 
-# Update_Empleado Funcion para editar al empleado
+# Update_Empleado Función para editar al empleado
 @app.route('/Update_Empleado', methods=['POST', 'GET'])
 def Update_Empleado():
     if request.method == 'POST':
@@ -293,39 +285,39 @@ def Update_Empleado():
             
             mysql.connection.commit()
             flash("Empleado actualizado con éxito")
-            return redirect(url_for('inventario'))
+            return redirect(url_for('inventario', nombre=session.get('nombre')))
         except Exception as e:
             flash(f"Error al actualizar al empleado: {str(e)}")
         finally:
             cur.close()
-    return render_template('Redirigir_Empleado')
+    return render_template('Redirigir_Empleado', nombre=session.get('nombre'))
 
-# Funcion del inventario para registrar las entradas
+# Función del inventario para registrar las entradas
 @app.route('/Entradas')
 def Entradas():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM entrada_productos")
     entradas_data = cur.fetchall()
     cur.close()
-    return render_template('Entradas.html', entradas_data=entradas_data)  
+    return render_template('Entradas.html', entradas_data=entradas_data, nombre=session.get('nombre'))
 
-# Funcion para redirigir al template de Entradas.html
+# Función para redirigir al template de Entradas.html
 @app.route('/redireccionar_a_entradas')
 def redireccionar_a_entradas():
     # Redireccionar a la página de Entradas.html
-    return redirect(url_for('Entradas'))
+    return redirect(url_for('Entradas', nombre=session.get('nombre')))
 
-# Funcion para registrar las salidas de los productos
+# Función para registrar las salidas de los productos
 @app.route('/Salidas')
 def Salidas():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM salida_productos")
     salidas_data = cur.fetchall()
     cur.close()
-    return render_template('Salidas.html', salidas=salidas_data)
+    return render_template('Salidas.html', salidas=salidas_data, nombre=session.get('nombre'))
 
-# Funcion para registrar las novedades de los productos
-# Funcion para mostrar las novedades de entrada
+# Función para registrar las novedades de los productos
+# Función para mostrar las novedades de entrada
 @app.route('/Novedades')
 def Novedades():
     cur = mysql.connection.cursor()
@@ -337,36 +329,64 @@ def Novedades():
 
     cur.close()
     
-    return render_template('Novedades.html', entradas=entradas_data, salidas=salidas_data)
+    return render_template('Novedades.html', entradas=entradas_data, salidas=salidas_data, nombre=session.get('nombre'))
 
 # Citas
 # Citas
 @app.route('/Registrar_Cita', methods=["GET", "POST"])
 def Registrar_Cita():
-    cursor = mysql.connection.cursor()
-    cursor.close()
-    
     if request.method == "POST":
+        cliente_id = session.get('id')
+
+        # Verificar el límite de citas
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT num_citas FROM usuarios WHERE id = %s", (cliente_id,))
+        num_citas = cur.fetchone()['num_citas']
+        cur.close()
+
+        if num_citas >= 5:
+            flash("Has alcanzado el límite de 5 citas por favor, elimina una cita existente para agregar una nueva.")
+            return redirect(url_for('Citas'))
+
+        # Procesar el formulario de cita
         nombre = request.form.get('nombre')
         servicio = request.form.get('servicio')
         empleado_nombre = request.form.get('empleados_nombre')
         fecha = request.form.get('Fecha')
         hora = request.form.get('Hora')
         motivo = request.form.get('motivo')
-        
-        # Obtener el ID del usuario logueado desde la sesión
-        session.get('id')
-        
+
+        # Insertar la cita en la base de datos
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO citas (nombre, servicio, empleado_nombre, fecha, hora, motivo, id_cliente) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-            (nombre, servicio, empleado_nombre, fecha, hora, motivo, session['id']))
+                    (nombre, servicio, empleado_nombre, fecha, hora, motivo, cliente_id))
+        mysql.connection.commit()
+
+        # Actualizar el contador de citas en la tabla de usuarios
+        cur.execute("UPDATE usuarios SET num_citas = num_citas + 1 WHERE id = %s", (cliente_id,))
+        mysql.connection.commit()
+
+        cur.close()
+
+        flash("Cita agregada correctamente.")
+        return redirect(url_for('Citas'))
+
+    return render_template("Citas.html", nombre=session.get('nombre'))
+
+@app.route('/eliminar_cita/<int:cita_id>', methods=["GET"])
+def eliminar_cita(cita_id):
+    try:
+        # Eliminar la cita de la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM citas WHERE id_cita = %s", (cita_id,))
         mysql.connection.commit()
         cur.close()
 
-        return redirect(url_for('Citas'))
+        flash("Cita eliminada correctamente.")
+    except Exception as e:
+        flash("Error al eliminar la cita: " + str(e))
 
-    return render_template("Citas.html")
-
+    return redirect(url_for('Citas'))
 
 if __name__ == "__main__":
     app.run(debug=True)

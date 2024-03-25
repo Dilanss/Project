@@ -17,15 +17,16 @@
     <link href="static/css/css/sb-admin.css" rel="stylesheet">
     <link href="static/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
     <link rel="icon" href="../static/IMG/Uñas-icono.png">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 </head>
-<body class="bg-dark">
+<body id="Forgot">
 <div class="container">
     <div class="card card-login mx-auto mt-5">
-        <div class="card-header">Reset Password</div>
+        <div class="card-header">Restablecer contraseña</div>
         <div class="card-body">
             <div class="text-center mt-4 mb-5">
-                <h4>Forgot your password?</h4>
-                <p>Enter your Username and we will guide you on how to reset your password.</p>
+                <h4>Olvidaste tu contraseña?</h4>
+                <p>Ingresa tu correo registrado para seguir con tu cambio de contraseña</p>
             </div>
             <form action="" method="post">
                 <div class="form-group">
@@ -34,17 +35,17 @@
                 </div>
                 <br>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-primary btn-block" name="submit" value="Reset Password">
+                    <input type="submit" class="btn btn-primary btn-block" name="submit" value="Reiniciar contraseña">
                 </div>
             </form>
             {% if error %}
             <div class="form-group">
-                <div class="alert alert-danger bg-danger"><h3 class="blink_text">No Record Found</h3></div>
+                <div class="alert alert-danger bg-danger"><h3 class="blink_text">No encontrado</h3></div>
             </div>
             {% endif %}
 
             <div class="text-center">
-                <a class="d-block small" href="{{ url_for ('login') }}">Back to Login</a>
+                <a class="d-block small" href="{{ url_for ('login') }}">Volver al login</a>
             </div>
         </div>
     </div>

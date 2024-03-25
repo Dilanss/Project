@@ -129,15 +129,16 @@ CREATE TABLE usuarios (
   nombre varchar(100) DEFAULT NULL,
   apellido varchar(100) DEFAULT NULL,
   telefono int(20) DEFAULT NULL
+  num_citas int(11) DEFAULT 0
 );
 
-INSERT INTO usuarios (id, correo, password, id_rol, nombre, apellido, telefono) VALUES
-(1, 'wendyhuertas2408@gmail.com', '12', 1, 'Wendy', 'Huertas', 123123),
-(2, 'dilanjimenez208@gmail.com', '123', 2, 'Dilan', 'Jimenez', 234234),
-(3, 'wendy2408@outlook.es', '1234', 3, 'Lorena', 'Hernandez', 423423),
-(5, 'alejandro@gmail.com', '456', 3, 'Alejandro', 'Martinez', 2147483647),
-(6, 'alejandro@gmail.com', '456', 3, 'Alejandro', 'Martinez', 2147483647),
-(7, 'dilanjimenez200@gmail.com', '1234567', 1, 'Dilan', 'Jimenez', 123124);
+INSERT INTO usuarios (id, correo, password, id_rol, nombre, apellido, telefono, num_citas) VALUES
+(1, 'wendyhuertas2408@gmail.com', '12', 1, 'Wendy', 'Huertas', 123123, 0),
+(2, 'dilanjimenez208@gmail.com', '123', 2, 'Dilan', 'Jimenez', 234234, 0),
+(3, 'wendy2408@outlook.es', '1234', 3, 'Lorena', 'Hernandez', 423423, 0),
+(5, 'alejandro@gmail.com', '456', 3, 'Alejandro', 'Martinez', 2147483647, 0),
+(6, 'alejandro@gmail.com', '456', 3, 'Alejandro', 'Martinez', 2147483647, 0),
+(7, 'dilanjimenez200@gmail.com', '1234567', 1, 'Dilan', 'Jimenez', 123124, 0);
 
 CREATE TABLE servicios (
   id_servicio int(11) NOT NULL,

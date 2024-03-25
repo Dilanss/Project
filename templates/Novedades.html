@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Novedades</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
     <!-- Icono de la pestañad de inicio -->
     <link rel="icon" href="/static/IMG/inventario.png">
 
@@ -26,47 +27,44 @@
     </style>
 </head>
 <body id="Novedades">
-    <nav class="Navegador_Nuevo">
-        <ul>
-            <li>
+    <div class="contenedor">
+        <nav>
+            <ul>
                 <a href="#" class="logo">
-                    <img src="{{url_for('static', filename='IMG/logo.1.jfif')}}" alt="Logo">
-                    <span class="nav-item"></span>
+                    <span class="nav-item">Novedades</span>
                 </a>
-            </li>
-            <li><a href="#">
-                <span class="nav-item"></span>
-            </a></li>
-            <li><a href="href="{{ url_for('admin')}}"">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffbcbf" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-                <span class="nav-item">Inicio</span>
-            </a></li>
-			
-
-			<li><a href="{{ url_for('inventario')}}">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="#ffbcbf" d="M32 0C14.3 0 0 14.3 0 32S14.3 64 32 64H48c8.8 0 16 7.2 16 16V368c0 44.2 35.8 80 80 80h18.7c-1.8 5-2.7 10.4-2.7 16c0 26.5 21.5 48 48 48s48-21.5 48-48c0-5.6-1-11-2.7-16H450.7c-1.8 5-2.7 10.4-2.7 16c0 26.5 21.5 48 48 48s48-21.5 48-48c0-5.6-1-11-2.7-16H608c17.7 0 32-14.3 32-32s-14.3-32-32-32H144c-8.8 0-16-7.2-16-16V80C128 35.8 92.2 0 48 0H32zM192 80V272c0 26.5 21.5 48 48 48H560c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H464V176c0 5.9-3.2 11.3-8.5 14.1s-11.5 2.5-16.4-.8L400 163.2l-39.1 26.1c-4.9 3.3-11.2 3.6-16.4 .8s-8.5-8.2-8.5-14.1V32H240c-26.5 0-48 21.5-48 48z"/></svg>
-                <span class="nav-item">Inventario</span>
-            </a></li>
-            <li><a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffbcbf" d="M128 0c17.7 0 32 14.3 32 32V64H288V32c0-17.7 14.3-32 32-32s32 14.3 32 32V64h48c26.5 0 48 21.5 48 48v48H0V112C0 85.5 21.5 64 48 64H96V32c0-17.7 14.3-32 32-32zM0 192H448V464c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V192zm64 80v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm128 0v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H208c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V272c0-8.8-7.2-16-16-16H336zM64 400v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H80c-8.8 0-16 7.2-16 16zm144-16c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H208zm112 16v32c0 8.8 7.2 16 16 16h32c8.8 0 16-7.2 16-16V400c0-8.8-7.2-16-16-16H336c-8.8 0-16 7.2-16 16z"/></svg>
-                <span class="nav-item">Citas</span>
-            </a></li>
-            <li><a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="#ffbcbf" d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM72 272a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm104-16H304c8.8 0 16 7.2 16 16s-7.2 16-16 16H176c-8.8 0-16-7.2-16-16s7.2-16 16-16zM72 368a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm88 0c0-8.8 7.2-16 16-16H304c8.8 0 16 7.2 16 16s-7.2 16-16 16H176c-8.8 0-16-7.2-16-16z"/></svg>
-                <span class="nav-item">Catalogo</span>
-            </a></li>
-            <li><a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="#ffbcbf" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H322.8c-3.1-8.8-3.7-18.4-1.4-27.8l15-60.1c2.8-11.3 8.6-21.5 16.8-29.7l40.3-40.3c-32.1-31-75.7-50.1-123.9-50.1H178.3zm435.5-68.3c-15.6-15.6-40.9-15.6-56.6 0l-29.4 29.4 71 71 29.4-29.4c15.6-15.6 15.6-40.9 0-56.6l-14.4-14.4zM375.9 417c-4.1 4.1-7 9.2-8.4 14.9l-15 60.1c-1.4 5.5 .2 11.2 4.2 15.2s9.7 5.6 15.2 4.2l60.1-15c5.6-1.4 10.8-4.3 14.9-8.4L576.1 358.7l-71-71L375.9 417z"/></svg>
-                <span class="nav-item">Usuario</span>
-            </a></li>
-            <li><a href="{{ url_for('home')}}" class="logout">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffbcbf" d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
-                <span class="nav-item">Log out</span>
-            </a></li>
-        </ul>
-    </nav>
+                <a href="{{ url_for('admin')}}">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-item">Home</span>
+                </a>
+                <a href="">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-item">Citas</span>
+                </a>
+                <a href="{{ url_for('inventario')}}">
+                    <i class="fas fa-wallet"></i>
+                    <span class="nav-item">Inventario</span>
+                </a>
+                <a href="">
+                    <i class="fas fa-chart-bar"></i>
+                    <span class="nav-item">Catalogo</span>
+                </a>
+                <a href="{{ url_for('Registrar_Empleado')}}">
+                    <i class="fas fa-tasks"></i>
+                    <span class="nav-item">Agregar empleado</span>
+                </a>
+                <a href="">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-item">Perfil</span>
+                </a>
+                <a href="{{ url_for('home')}}" class="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="nav-item">Log out</span>
+                </a>
+            </ul>
+        </nav>
     <br>
-    <!-- Título -->
+    
     <div class="container title-container">
         <h1>Novedades de entrada</h1>
     </div>

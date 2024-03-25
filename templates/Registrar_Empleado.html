@@ -16,40 +16,44 @@
     <nav>
         <ul>
         <br><br>
-        <li><a href="{{ url_for('admin')}}">
+        <a href="#" class="logo">
+            <span class="nav-item">Lista de empleados</span>
+        </a>
+        <a href="{% if 'logueado' in session and session['logueado'] %}{% if session.get('id_rol') == 1 %}{{ url_for('admin') }}{% elif session.get('id_rol') == 2 %}{{ url_for('Empleado') }}{% elif session.get('id_rol') == 3 %}{{ url_for('Cliente') }}{% endif %}{% else %}{{ url_for('home') }}{% endif %}">
             <i class="fas fa-home"></i>
             <span class="nav-item">Home</span>
-        </a></li>
-        <li><a href="#">
+        </a>
+        <a href="{% if 'logueado' in session and session['logueado'] %}{% if session.get('id_rol') == 1 %}{{ url_for('admin') }}{% elif session.get('id_rol') == 2 %}{{ url_for('Citas') }}{% elif session.get('id_rol') == 3 %}{{ url_for('Cliente') }}{% endif %}{% else %}{{ url_for('home') }}{% endif %}">
             <i class="fas fa-user"></i>
             <span class="nav-item">Citas</span>
-        </a></li>
-        <li><a href="{{ url_for('inventario')}}">
+        </a>
+        <a href="{{ url_for('inventario')}}">
             <i class="fas fa-wallet"></i>
             <span class="nav-item">Inventario</span>
-        </a></li>
-        <li><a href="#">
+        </a>
+        <a href="#">
             <i class="fas fa-chart-bar"></i>
             <span class="nav-item">Catalogo</span>
-        </a></li>
-        <li><a href="{{ url_for('Registrar_Empleado')}}">
+        </a>
+        <a href="{% if 'logueado' in session and session['logueado'] and session.get('id_rol') == 1 %}{{ url_for('Registrar_Empleado') }}{% else %}{{ url_for('home') }}{% endif %}">
             <i class="fas fa-tasks"></i>
             <span class="nav-item">Agregar empleado</span>
-        </a></li>
-        <li><a href="#">
+        </a>
+        <a href="#">
             <i class="fas fa-cog"></i>
             <span class="nav-item">Perfil</span>
-        </a></li>
-        <li><a href="{{ url_for('home')}}" class="logout">
+        </a>
+        <a href="{{ url_for('home')}}" class="logout">
             <i class="fas fa-sign-out-alt"></i>
             <span class="nav-item">Log out</span>
-        </a></li>
+        </a>
         </ul>
     </nav>
 
     <main class="container mt-4">
+        <br>
         <section>
-            <h2>Lista de empleados
+            <h2>Lista de empleados y
                 <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">Agregar empleado</a>
             </h2>
         </section>
@@ -107,6 +111,7 @@
                 </div>
             </div>
         </div>
+        <br>
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -132,7 +137,7 @@
                     <td>{{ empleado['telefono'] }}</td>
                     <td>
                         <a href="/Update_Empleado/{{ empleado['id'] }}" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaledit{{ empleado['id'] }}">Editar</a>
-                        <!-- <button onclick="eliminarEmpleado('{{ empleado['id'] }}')" class="btn btn-danger btn-sm">Eliminar</button> -->
+                        <button onclick="eliminarEmpleado('{{ empleado['id'] }}')" class="btn btn-danger btn-sm">Eliminar</button> 
                     </td>
                 </tr>
                 <!-- Modal para actualizar al empleado-->
@@ -141,9 +146,6 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title text-primary" style="align-content: center;">Detalles del empleado para editar</h5>    
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
                             </div>
                             <div class="modal-body">
                                 <form action="{{ url_for('Update_Empleado') }}" method="POST">
@@ -152,18 +154,22 @@
                                         <label>Correo</label>
                                         <input value="{{ empleado['correo'] }}" type="email" name="correo" class="form-control" id="exampleFormControlInput1" placeholder="Correo" required>
                                     </div>
+                                    <br>
                                     <div class="form-group">
                                         <label>Nombre</label>
                                         <input value="{{ empleado['nombre'] }}" type="text" name="nombre" class="form-control" id="exampleFormControlInput1" placeholder="Nombre" required>
                                     </div>
+                                    <br>
                                     <div class="form-group">
                                         <label>Apellido</label>
                                         <input value="{{ empleado['apellido'] }}" type="text" name="apellido" class="form-control" id="exampleFormControlInput1" placeholder="Apellido" required>
                                     </div>
+                                    <br>
                                     <div class="form-group">
                                         <label>Telefono</label>
                                         <input value="{{ empleado['telefono'] }}" type="number" name="telefono"  class="form-control" id="exampleFormControlInput1" placeholder="Telefono" required>
                                     </div>
+                                    <br>
                                     <button type="submit" class="btn btn-success mb-2">Actualizar</button>
                                 </form>
                             </div>

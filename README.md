@@ -4,6 +4,14 @@
 
 In this repository you are going to find the code relative to my adso project...
 
+# Clonar repositorio
+
+Entra en tu terminal o tu visual estudio code y escribe lo siguiente
+
+```shell
+git clone https://github.com/Dilanss/Project.git
+cd Project
+```
 
 ### Initialize git
 

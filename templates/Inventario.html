@@ -259,6 +259,18 @@
             lista.style.display = "block";
         }
     }
+
+    window.onload = function () {
+        if (window.history && window.history.pushState) {
+            window.history.pushState('forward', null, './#');
+            window.onpopstate = function () {
+                // Aquí puedes realizar la acción de cerrar la sesión
+                // Por ejemplo, redirigir al usuario a la página de logout
+                window.location.href = "{{ url_for('logout') }}";
+            };
+        }
+    };
+        
 </script>
 
 <!-- Estilos al final de la pagina para el js -->

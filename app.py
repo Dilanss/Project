@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, url_for, flash, session, redirect
 from flask_mysqldb import MySQL
+from flask_mail import Mail
+from flask_mail import Message
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -10,6 +12,16 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'login'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+
+# Configuracion para enviar correos
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'dilanyarce22@gmail.com'  
+app.config['MAIL_PASSWORD'] = 'ppoj ltoy ryhq zrkg'  
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 mysql = MySQL(app)
 
@@ -75,6 +87,22 @@ def Citas():
 
     cursor = mysql.connection.cursor()
 
+    if session.get('id_rol') == 2:  # Si el usuario es un empleado
+        # Consulta para obtener el nombre del empleado logueado
+        cursor.execute("SELECT nombre FROM usuarios WHERE id = %s", (cliente_id,))
+        nombre_empleado = cursor.fetchone()['nombre']
+
+        # Consulta para obtener las citas del empleado logeado
+        cursor.execute("SELECT * FROM citas WHERE empleado_nombre = %s", (nombre_empleado,))
+    elif session.get('id_rol') == 1:  # Si el usuario es un administrador
+        # Consulta para obtener todas las citas
+        cursor.execute("SELECT * FROM citas")
+    else:
+        # Consulta para obtener las citas del cliente logeado
+        cursor.execute("SELECT * FROM citas WHERE id_cliente = %s", (cliente_id,))
+    
+    citas = cursor.fetchall()
+
     # Consulta para obtener nombres de servicios
     cursor.execute("SELECT nombre FROM servicios")
     servicios = cursor.fetchall()
@@ -84,10 +112,6 @@ def Citas():
     cursor.execute("SELECT nombre FROM usuarios WHERE id_rol = 2")
     empleados = cursor.fetchall()
     empleados_servicios = [empleado['nombre'] for empleado in empleados]
-
-    # Consulta para obtener las citas del cliente logeado
-    cursor.execute("SELECT * FROM citas WHERE id_cliente = %s", (cliente_id,))
-    citas = cursor.fetchall()
 
     cursor.close()
 
@@ -118,7 +142,9 @@ def is_email_registered(user_email):
 # Función para cerrar sesión
 @app.route('/logout')
 def logout():
-    session.clear()  
+    # Eliminar la sesión del usuario
+    session.clear()
+    # Redirigir al usuario a la página de inicio
     return redirect(url_for('home'))
 
 # Función para el template de la nueva contraseña 
@@ -332,7 +358,6 @@ def Novedades():
     return render_template('Novedades.html', entradas=entradas_data, salidas=salidas_data, nombre=session.get('nombre'))
 
 # Citas
-# Citas
 @app.route('/Registrar_Cita', methods=["GET", "POST"])
 def Registrar_Cita():
     if request.method == "POST":
@@ -356,17 +381,33 @@ def Registrar_Cita():
         hora = request.form.get('Hora')
         motivo = request.form.get('motivo')
 
+        # Verificar si la cita ya existe
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM citas WHERE nombre = %s AND servicio = %s AND empleado_nombre = %s AND fecha = %s AND hora = %s AND id_cliente = %s",
+                    (nombre, servicio, empleado_nombre, fecha, hora, cliente_id))
+        existing_cita = cur.fetchone()
+        cur.close()
+
         # Insertar la cita en la base de datos
         cur = mysql.connection.cursor()
         cur.execute("INSERT INTO citas (nombre, servicio, empleado_nombre, fecha, hora, motivo, id_cliente) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                     (nombre, servicio, empleado_nombre, fecha, hora, motivo, cliente_id))
         mysql.connection.commit()
 
-        # Actualizar el contador de citas en la tabla de usuarios
-        cur.execute("UPDATE usuarios SET num_citas = num_citas + 1 WHERE id = %s", (cliente_id,))
-        mysql.connection.commit()
-
+        # Obtener el correo electrónico del usuario
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT correo FROM usuarios WHERE id = %s", (cliente_id,))
+        user_email = cur.fetchone()['correo']
         cur.close()
+
+        # Enviar correo electrónico
+        msg = Message('Nueva cita registrada', sender='dilanyarce22@gmail.com', recipients=[user_email])
+        msg.body = f"""\
+        Nueva cita registrada
+
+        Se ha registrado una nueva cita para {nombre} el día {fecha} a las {hora} con el empleado {empleado_nombre}. Motivo: {motivo}
+        """
+        mail.send(msg)
 
         flash("Cita agregada correctamente.")
         return redirect(url_for('Citas'))

@@ -49,10 +49,15 @@
                 </a>
             </ul>
         </nav>
-
+        
         <main class="container mt-4">
+            <br>
             <section>
-                <h2>Lista de sus citas</h2>
+                {% if session['id_rol'] == 1 %}
+                    <h2>Lista de citas</h2>
+                {% else %}
+                    <h2>Lista de sus citas</h2>
+                {% endif %}
             </section>
             <br>
             {% if session['id_rol'] != 2 %}
@@ -75,13 +80,16 @@
             {% endfor %}
             {% endif %}
             {% endwith %}
-
+            <br>
             <!-- Modal para agregar producto -->
             <div id="myModal" class="modal fade" role="dialog">
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title text-primary">Ingresa una nueva cita</h5>  
+                            {% if session['id_rol'] == 2 %}
+                                {% else %}
+                                <h5 class="modal-title text-primary">Ingresa una nueva cita</h5> 
+                            {% endif %}
                         </div>
                         <div class="modal-body">
                             <form action="{{ url_for('Registrar_Cita') }}" method="POST">
@@ -135,7 +143,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">Nombre</th>
+                        <th scope="col">Nombre cliente</th>
                         <th scope="col">Servicio</th>
                         <th scope="col">Empleado</th>
                         <th scope="col">Fecha</th>
@@ -146,18 +154,20 @@
                 </thead>
                 <tbody>
                     {% for cita in citas %}
-                        <tr>
+                    <tr>
                         <td>{{ cita['nombre'] }}</td>
                         <td>{{ cita['servicio'] }}</td>
                         <td>{{ cita['empleado_nombre'] }}</td>
                         <td>{{ cita['fecha'] }}</td>
                         <td>{{ cita['hora'] }}</td>
                         <td>{{ cita['motivo'] }}</td>
-                        <td>
-                            <button onclick="confirmarEliminar('{{ cita['id_cita'] }}')" class="btn btn-danger btn-sm">Eliminar</button>
-                        </td>
-                        </tr>
-                        {% endfor %}
+                        {% if session['id_rol'] != 2 %}
+                            <td>
+                                <button onclick="confirmarEliminar('{{ cita['id_cita'] }}')" class="btn btn-danger btn-sm">Eliminar</button>
+                            </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
                 </tbody>
             </table> 
         </main>
@@ -186,6 +196,18 @@
                     console.error('Error de red:', error);
                 });
             }
+            
+            window.onload = function () {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState('forward', null, './#');
+                    window.onpopstate = function () {
+                        // Aquí puedes realizar la acción de cerrar la sesión
+                        // Por ejemplo, redirigir al usuario a la página de logout
+                        window.location.href = "{{ url_for('logout') }}";
+                    };
+                }
+            };
+            
         </script>
         
 

@@ -199,6 +199,19 @@
                 print("Error la eliminar el empleado seleccionado por favor vuelve a intentarlo.")
             }
         });
+
+        
+    window.onload = function () {
+        if (window.history && window.history.pushState) {
+            window.history.pushState('forward', null, './#');
+            window.onpopstate = function () {
+                // Aquí puedes realizar la acción de cerrar la sesión
+                // Por ejemplo, redirigir al usuario a la página de logout
+                window.location.href = "{{ url_for('logout') }}";
+            };
+        }
+    };
+    
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -413,37 +413,22 @@ def forgot():
     if request.method == 'POST':
         user_email = request.form['txtCorreo']
             
-        if is_email_registered(user_email):
-            session['reset_email'] = user_email
-            # Envía el correo electrónico con el enlace de restablecimiento de contraseña
-            send_reset_email(user_email)
-            flash('Se ha enviado el link para recuperar la contraseña a tu correo electrónico.', 'success')
-            return redirect(url_for('login'))
-        else:
-            error = 'Correo no registrado. Por favor, inténtalo de nuevo o regístrate.'
+        session['reset_email'] = user_email
+        send_reset_email(user_email)
+        flash('Se ha enviado el link para recuperar la contraseña a tu correo electrónico.', 'success')
+        return redirect(url_for('login'))
     return render_template('forgot.html', error=error)
-
-# Función para verificar si el correo electrónico está registrado en la base de datos
-def is_email_registered(user_email):
-    # Aquí debes implementar la lógica para verificar si el correo electrónico está registrado en tu base de datos
-    return True  # Esto es solo un ejemplo, debes implementar tu propia lógica
 
 # Función para enviar el correo electrónico con el enlace de restablecimiento de contraseña
 def send_reset_email(user_email):
-    token = generate_reset_token(user_email)
-    reset_link = url_for('newpassword', token=token, _external=True)
+    reset_link = url_for('newpassword', _external=True)
     msg = Message('Recuperación de contraseña', sender='dilanyarce22@gmail.com', recipients=[user_email])
     msg.body = f'Para restablecer tu contraseña, haz clic en el siguiente enlace: {reset_link}'
     mail.send(msg)
 
-# Genera un token único para el restablecimiento de contraseña
-def generate_reset_token(user_email):
-    # Aquí debes implementar la lógica para generar un token único
-    return 'unique_token'  # Esto es solo un ejemplo, debes implementar tu propia lógica
-
 # Ruta para restablecer la contraseña
-@app.route('/newpassword/<token>', methods=['GET', 'POST'])
-def newpassword(token):
+@app.route('/newpassword', methods=['GET', 'POST'])
+def newpassword():
     error = None
     if request.method == 'POST':
         if request.form['newpass'] != request.form['conpass']:
@@ -451,12 +436,25 @@ def newpassword(token):
         else:
             user_email = session.get('reset_email')
             new_password = request.form['newpass']
-            # Aquí debes implementar la lógica para actualizar la contraseña en tu base de datos
-            session.pop('reset_email', None)
-            flash('Contraseña restablecida exitosamente. Inicia sesión con tu nueva contraseña.', 'success')
-            return redirect(url_for('login'))
+            if update_password_in_database(user_email, new_password):
+                session.pop('reset_email', None)
+                flash('Contraseña restablecida exitosamente. Inicia sesión con tu nueva contraseña.', 'success')
+                return redirect(url_for('login'))
+            else:
+                error = 'Error al actualizar la contraseña. Por favor, inténtalo de nuevo.'
     return render_template('newpassword.html', error=error)
 
-
+# Función para actualizar la contraseña en la base de datos
+def update_password_in_database(user_email, new_password):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE usuarios SET password = %s WHERE correo = %s", (new_password, user_email))
+        mysql.connection.commit()
+        cur.close()
+        return True
+    except Exception as e:
+        print("Error al actualizar la contraseña:", e)
+        return False
+    
 if __name__ == "__main__":
     app.run(debug=True)

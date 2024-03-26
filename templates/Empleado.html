@@ -16,7 +16,7 @@
             <a href="#" class="logo">
                 <span class="nav-item">Empleado</span>
             </a>
-            <a href="{{ url_for('admin')}}">
+            <a href="{% if 'logueado' in session and session['logueado'] %}{% if session.get('id_rol') == 1 %}{{ url_for('admin') }}{% elif session.get('id_rol') == 2 %}{{ url_for('Empleado') }}{% elif session.get('id_rol') == 3 %}{{ url_for('Cliente') }}{% endif %}{% else %}{{ url_for('home') }}{% endif %}">
                 <i class="fas fa-home"></i>
                 <span class="nav-item">Home</span>
             </a>

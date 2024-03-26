@@ -149,7 +149,12 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Hora</th>
                         <th scope="col">Motivo</th>
+                        {% if session['id_rol'] != 2 %}
                         <th scope="col">Acciones</th>
+                        {% endif %}
+                        {% if session['id_rol'] == 1 or session['id_rol'] == 2 %}
+                        <th scope="col">Editar</th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -162,14 +167,87 @@
                         <td>{{ cita['hora'] }}</td>
                         <td>{{ cita['motivo'] }}</td>
                         {% if session['id_rol'] != 2 %}
-                            <td>
-                                <button onclick="confirmarEliminar('{{ cita['id_cita'] }}')" class="btn btn-danger btn-sm">Eliminar</button>
-                            </td>
+                        <td>
+                            <button onclick="confirmarEliminar('{{ cita['id_cita'] }}')" class="btn btn-danger btn-sm">Eliminar</button>
+                        </td>
+                        {% endif %}
+                        {% if session['id_rol'] == 1 or session['id_rol'] == 2 %}
+                        <td>
+                            <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#modaledit{{ cita['id_cita'] }}">Editar</button>
+                        </td>
                         {% endif %}
                     </tr>
+                    <div id="modaledit{{ cita['id_cita'] }}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-primary" style="align-content: center;">Detalles de la cita para editar</h5>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ url_for('Citas') }}" method="POST">
+                                        <input type="hidden" name="id_cita" value="{{ cita['id_cita'] }}">
+                                        {% if session['id_rol'] == 2 %}
+                                            <div class="form-group">
+                                                <label>Fecha:</label>
+                                                <input value="{{ cita['fecha'] }}" type="date" name="fecha" class="form-control">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Hora:</label>
+                                                <input value="{{ cita['hora'] }}" type="time" name="hora" class="form-control">
+                                            </div>
+                                            <br>
+                                        {% else %}
+                                            <div class="form-group">
+                                                <label>Nombre:</label>
+                                                <input value="{{ cita['nombre'] }}" type="text" name="nombre" class="form-control">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Servicio:</label>
+                                                <select name="servicio" class="form-control" id="servicio" required>
+                                                    <option value="" selected>Selecciona el servicio</option>
+                                                    {% for servicio in nombres_servicios %}
+                                                        <option value="{{ servicio }}">{{ servicio }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Empleado:</label>
+                                                <select name="empleado_nombre" class="form-control" id="empleado_nombre" required>
+                                                    <option value="" selected>Selecciona el empleado</option>
+                                                    {% for empleado in empleados_servicios %}
+                                                        <option value="{{ empleado }}">{{ empleado }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Fecha:</label>
+                                                <input value="{{ cita['fecha'] }}" type="date" name="fecha" class="form-control">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Hora:</label>
+                                                <input value="{{ cita['hora'] }}" type="time" name="hora" class="form-control">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label>Motivo:</label>
+                                                <input value="{{ cita['motivo'] }}" type="text" name="motivo" class="form-control">
+                                            </div>
+                                            <br>
+                                        {% endif %}
+                                        <button type="submit" class="btn btn-success">Actualizar</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {% endfor %}
                 </tbody>
-            </table> 
+            </table>
         </main>
 
         <script>
@@ -197,16 +275,7 @@
                 });
             }
             
-            window.onload = function () {
-                if (window.history && window.history.pushState) {
-                    window.history.pushState('forward', null, './#');
-                    window.onpopstate = function () {
-                        // Aquí puedes realizar la acción de cerrar la sesión
-                        // Por ejemplo, redirigir al usuario a la página de logout
-                        window.location.href = "{{ url_for('logout') }}";
-                    };
-                }
-            };
+            
             
         </script>
         

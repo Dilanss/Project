@@ -80,8 +80,26 @@ def Redirigir_Empleado():
     return render_template("Registrar_Empleado.html", nombre=session.get('nombre'))
 
 #Redirigir al template de Citas.html
-@app.route('/Citas')
+@app.route('/Citas', methods=['GET', 'POST'])
 def Citas():
+    if request.method == 'POST':
+        id_cita = request.form['id_cita']
+        fecha = request.form['fecha']
+        hora = request.form['hora']
+        servicio = request.form['servicio']  
+        empleado_nombre = request.form['empleado_nombre'] 
+        motivo = request.form['motivo']
+        
+        # Actualizar la cita en la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE citas SET fecha=%s, hora=%s, servicio=%s, empleado_nombre=%s, motivo=%s WHERE id_cita=%s", 
+                    (fecha, hora, servicio, empleado_nombre, motivo, id_cita)) 
+        mysql.connection.commit()
+        cur.close()
+        
+        flash("Cita actualizada correctamente.")
+        return redirect(url_for('Citas'))
+
     # Obtener el ID del cliente logeado desde la sesión
     cliente_id = session.get('id')
 
@@ -117,28 +135,6 @@ def Citas():
 
     return render_template("Citas.html", nombres_servicios=nombres_servicios, empleados_servicios=empleados_servicios, citas=citas, nombre=session.get('nombre'))
 
-# Función para redirigir al olvidar contraseña ademas de validar si el correo existe con la otra funcion def 
-@app.route('/forgot', methods=['GET', 'POST'])
-def forgot():
-    error = None
-    if request.method == 'POST':
-        user_email = request.form['txtCorreo']
-            
-        if is_email_registered(user_email):
-            session['reset_email'] = user_email
-            return redirect(url_for('newpassword'))
-        else:
-            error = 'Correo no registrado. Por favor, inténtalo de nuevo o regístrate.'
-    return render_template('forgot.html', error=error)
-
-def is_email_registered(user_email):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM usuarios WHERE correo = %s", (user_email,))
-    user = cur.fetchone()
-    cur.close()
-    return user is not None
-# Fin de la funcion para verificar que el correo existe
-
 # Función para cerrar sesión
 @app.route('/logout')
 def logout():
@@ -146,24 +142,6 @@ def logout():
     session.clear()
     # Redirigir al usuario a la página de inicio
     return redirect(url_for('home'))
-
-# Función para el template de la nueva contraseña 
-@app.route('/newpassword', methods=['GET', 'POST'])
-def newpassword():
-    error = None
-    if request.method == 'POST':
-        if request.form['newpass'] != request.form['conpass']:
-            error = 'Las contraseñas no coinciden..!!'
-        else:
-            user_email = session.get('reset_email')
-            new_password = request.form['newpass']
-            cur = mysql.connection.cursor()
-            cur.execute("UPDATE usuarios SET password = %s WHERE correo = %s", (new_password, user_email))
-            mysql.connection.commit()
-            cur.close()
-            session.pop('reset_email', None)
-            return redirect(url_for('home'))
-    return render_template('newpassword.html', error=error)
 
 # Función para redirigir al registro.html
 @app.route('/registro')
@@ -428,6 +406,57 @@ def eliminar_cita(cita_id):
         flash("Error al eliminar la cita: " + str(e))
 
     return redirect(url_for('Citas'))
+
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    error = None
+    if request.method == 'POST':
+        user_email = request.form['txtCorreo']
+            
+        if is_email_registered(user_email):
+            session['reset_email'] = user_email
+            # Envía el correo electrónico con el enlace de restablecimiento de contraseña
+            send_reset_email(user_email)
+            flash('Se ha enviado el link para recuperar la contraseña a tu correo electrónico.', 'success')
+            return redirect(url_for('login'))
+        else:
+            error = 'Correo no registrado. Por favor, inténtalo de nuevo o regístrate.'
+    return render_template('forgot.html', error=error)
+
+# Función para verificar si el correo electrónico está registrado en la base de datos
+def is_email_registered(user_email):
+    # Aquí debes implementar la lógica para verificar si el correo electrónico está registrado en tu base de datos
+    return True  # Esto es solo un ejemplo, debes implementar tu propia lógica
+
+# Función para enviar el correo electrónico con el enlace de restablecimiento de contraseña
+def send_reset_email(user_email):
+    token = generate_reset_token(user_email)
+    reset_link = url_for('newpassword', token=token, _external=True)
+    msg = Message('Recuperación de contraseña', sender='dilanyarce22@gmail.com', recipients=[user_email])
+    msg.body = f'Para restablecer tu contraseña, haz clic en el siguiente enlace: {reset_link}'
+    mail.send(msg)
+
+# Genera un token único para el restablecimiento de contraseña
+def generate_reset_token(user_email):
+    # Aquí debes implementar la lógica para generar un token único
+    return 'unique_token'  # Esto es solo un ejemplo, debes implementar tu propia lógica
+
+# Ruta para restablecer la contraseña
+@app.route('/newpassword/<token>', methods=['GET', 'POST'])
+def newpassword(token):
+    error = None
+    if request.method == 'POST':
+        if request.form['newpass'] != request.form['conpass']:
+            error = 'Las contraseñas no coinciden..!!'
+        else:
+            user_email = session.get('reset_email')
+            new_password = request.form['newpass']
+            # Aquí debes implementar la lógica para actualizar la contraseña en tu base de datos
+            session.pop('reset_email', None)
+            flash('Contraseña restablecida exitosamente. Inicia sesión con tu nueva contraseña.', 'success')
+            return redirect(url_for('login'))
+    return render_template('newpassword.html', error=error)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

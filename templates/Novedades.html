@@ -53,7 +53,7 @@
                     <i class="fas fa-tasks"></i>
                     <span class="nav-item">Agregar empleado</span>
                 </a>
-                <a href="">
+                <a href="{{ url_for('actualizar_cuenta')}}">
                     <i class="fas fa-cog"></i>
                     <span class="nav-item">Perfil</span>
                 </a>
@@ -79,6 +79,7 @@
                     <th>Id_Producto</th>
                     <th>Fecha</th>
                     <th>Nombre</th>
+                    <th>Precio por unidad</th>
                     <th>Cantidad_Actual</th>
                     <th>Entrada_Inicial</th>
                     <th>Salida</th>
@@ -91,6 +92,7 @@
                         <td>{{ novedad['Id_Producto'] }}</td>
                         <td>{{ novedad['fecha'] }}</td>
                         <td>{{ novedad['Nombre'] }}</td>
+                        <td>{{ novedad['Precio'] }}</td>
                         <td>{{ novedad['Cantidad_Actual'] }}</td> 
                         <td>{{ novedad['Entrada'] }}</td>
                         <td>{{ novedad['Entrada'] - novedad['Cantidad_Actual'] }}</td>
@@ -110,17 +112,6 @@
             }
         }
 
-        window.onload = function () {
-            if (window.history && window.history.pushState) {
-                window.history.pushState('forward', null, './#');
-                window.onpopstate = function () {
-                    // Aquí puedes realizar la acción de cerrar la sesión
-                    // Por ejemplo, redirigir al usuario a la página de logout
-                    window.location.href = "{{ url_for('logout') }}";
-                };
-            }
-        };
-    
     </script>
 
     <!-- Scripts de Bootstrap -->

@@ -3217,7 +3217,7 @@ line-height:200px;
 
 #Citas nav {
   background: #fff;
-  width: 280px;
+  width: 350px;
   height: 953px;
   box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
 }
@@ -3263,7 +3263,6 @@ line-height:200px;
   position: absolute;
   bottom: 0;
 }
-
 /* ----------------------------------------------------------Forgot.html */
 
 #Forgot  {
@@ -3273,4 +3272,74 @@ line-height:200px;
 /* ----------------------------------------------------------newpassword.html */
 #NewPass {
   background: radial-gradient( #FFBCBF, #F394C3);
+}
+
+
+/* ---------------------------------------------------------- Estilos para el cambio de perfil */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700");
+
+#Cambiar_Perfil {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+#Cambiar_Perfil body {
+  background: #dfe9f5;
+  margin: 0;
+  padding: 0;
+}
+
+#Cambiar_Perfil .contenedor {
+  display: flex;
+}
+
+#Cambiar_Perfil nav {
+  background: #fff;
+  width: 280px;
+  height: 953px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+}
+
+#Cambiar_Perfil nav .logo img {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+}
+
+#Cambiar_Perfil nav .logo span {
+  font-weight: bold;
+  padding-left: 15px;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+#Cambiar_Perfil nav a {
+  color: rgb(85, 83, 83);
+  font-size: 14px;
+  display: table; 
+  padding: 10px;
+  text-decoration: none;
+}
+
+#Cambiar_Perfil nav .fas {
+  width: 70px;
+  height: 40px;
+  font-size: 20px;
+  text-align: center;
+}
+
+#Cambiar_Perfil nav .nav-item {
+  margin-left: 10px;
+}
+
+#Cambiar_Perfil nav a:hover {
+  background: #cec8c8;
+  
+}
+
+#Cambiar_Perfil nav .logout {
+  position: absolute;
+  bottom: 0;
 }

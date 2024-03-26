@@ -220,31 +220,37 @@
                 Un corte de pelo en un salón de belleza es un servicio especializado que implica la manipulación y diseño de la longitud, forma y estilo del cabello de una persona. </p>
             </div>
           </div>
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><img src="{{url_for('static', filename='IMG/Queratina.jpg')}}" alt=""></div>
+              <h4><a href="">Queratina</a></h4>
+              <p>
+                ¿Tu cabello necesita un impulso de vitalidad y fuerza? Nuestro tratamiento de queratina ofrece una solución efectiva para revitalizar y rejuvenecer tu cabello desde adentro hacia afuera. </p>
+            </div>
+          </div>
 
         </div>
 
       </div>
-    </section><!-- End Services Section -->
+    </section>
 
-    <!-- ======= Testimonials Section ======= -->
+    <!-- ======= Seccion para los comentario ======= -->
     <section id="testimonials" class="testimonials">
       <div class="container" data-aos="zoom-in">
-
         <div class="testimonials-slider swiper" data-aos="fade-up" data-aos-delay="100">
           <div class="swiper-wrapper">
-
             <div class="swiper-slide">
               <div class="testimonial-item">
-                <img src="{{ url_for('static', filename='IMG/testimonials/testimonials-1.jpg') }}" assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+                <img src="{{ url_for('static', filename='IMG/testimonials/testimonials-1.jpg') }}" class="testimonial-img" alt="">
                 <h3>Saul Goodman</h3>
                 <h4>Manicurista</h4>
                 <p>
                   <i class="bx bxs-quote-alt-left quote-icon-left"></i>
-                  Profecional en el area de manicurista con conocimientos y habilidades unicas las cuales hacen de nuestro manicurista uno de los mejores.
+                  Profesional en el área de manicurista con conocimientos y habilidades únicas las cuales hacen de nuestro manicurista uno de los mejores.
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
             <div class="swiper-slide">
               <div class="testimonial-item">
@@ -257,8 +263,7 @@
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
               </div>
-            </div><!-- End testimonial item -->
-
+            </div>
             <div class="swiper-slide">
               <div class="testimonial-item">
                 <img src="{{ url_for('static', filename='IMG/testimonials/testimonials-3.jpg') }}" class="testimonial-img" alt="">
@@ -270,7 +275,7 @@
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
             <div class="swiper-slide">
               <div class="testimonial-item">
@@ -283,7 +288,7 @@
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
             <div class="swiper-slide">
               <div class="testimonial-item">
@@ -296,16 +301,16 @@
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
               </div>
-            </div><!-- End testimonial item -->
+            </div>
 
           </div>
           <div class="swiper-pagination"></div>
         </div>
 
       </div>
-    </section><!-- End Testimonials Section -->
+    </section>
 
-    <!-- ======= Portfolio Section ======= -->
+    <!-- ======= Seccion del catalogo ======= -->
     <section id="portfolio" class="portfolio">
       <div class="container" data-aos="fade-up">
 
@@ -383,7 +388,8 @@
             <div class="portfolio-info">
               <h4>Producto 6</h4>
               <p>App</p>
-              <a href="{{url_for('static', filename='IMG/portfolio/portfolio-6.jpg')}}"" data-gallery="portfolioGallery" class="portfolio-lightbox preview-link" title="App 3"><i class="bx bx-plus"></i></a>
+              <a href="{{url_for('static', filename='IMG/portfolio/portfolio-6.jpg')}}" data-gallery="portfolioGallery"
+                class="portfolio-lightbox preview-link" title="App 3"><i class="bx bx-plus"></i></a>
               <a href="portfolio-details.html" class="details-link" title="More Details"><i class="bx bx-link"></i></a>
             </div>
           </div>
@@ -421,9 +427,9 @@
         </div>
 
       </div>
-    </section><!-- End Portfolio Section -->
+    </section>
 
-    <!-- ======= Team Section ======= -->
+    <!-- ======= Seccion para el team de desarolladores ======= -->
     <section id="team" class="team section-bg">
       <div class="container" data-aos="fade-up">
 
@@ -471,8 +477,6 @@
             </div>
           </div>
 
-  
-
           <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up" data-aos-delay="400">
             <div class="member">
               <div class="member-img">
@@ -485,18 +489,35 @@
                 </div>
               </div>
               <div class="member-info">
-                <h4>...</h4>
+                <h4>Oscar Sanabria</h4>
                 <span>Accountant</span>
               </div>
             </div>
           </div>
 
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch justify-content-center" data-aos="fade-up" data-aos-delay="400">
+            <div class="member">
+              <div class="member-img">
+                <img src="{{url_for('static', filename='IMG/team/team-4.jpg')}}" class="img-fluid" alt="">
+                <div class="social">
+                  <a href=""><i class="bi bi-twitter"></i></a>
+                  <a href=""><i class="bi bi-facebook"></i></a>
+                  <a href=""><i class="bi bi-instagram"></i></a>
+                  <a href=""><i class="bi bi-linkedin"></i></a>
+                </div>
+              </div>
+              <div class="member-info">
+                <h4>Jonathan Ruge</h4>
+                <span>Accountant</span>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
-    </section><!-- End Team Section -->
+    </section>
 
-    <!-- ======= Frequently Asked Questions Section ======= -->
+    <!-- ======= Seccion par las preguntas frecuentes ======= -->
     <section id="faq" class="faq section-bg">
       <div class="container" data-aos="fade-up">
 
@@ -568,9 +589,9 @@
         </div>
 
       </div>
-    </section><!-- End Frequently Asked Questions Section -->
+    </section>
 
-    <!-- ======= Contact Section ======= -->
+    <!-- ======= Seccion para el contactanos ======= -->
     <section id="contact" class="contact">
       <div class="container" data-aos="fade-up">
 
@@ -604,15 +625,12 @@
               <p>+57 3313 1231 456</p>
             </div>
           </div>
-
+  
         </div>
-
         <div class="row" data-aos="fade-up" data-aos-delay="100">
-
           <div class="col-lg-6 ">
             <iframe class="mb-4 mb-lg-0" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d12097.433213460943!2d-74.0062269!3d40.7101282!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xb89d1fe6bc499443!2sDowntown+Conference+Center!5e0!3m2!1smk!2sbg!4v1539943755621" frameborder="0" style="border:0; width: 100%; height: 384px;" allowfullscreen></iframe>
           </div>
-
           <div class="col-lg-6">
             <form action="forms/contact.php" method="post" role="form" class="php-email-form">
               <div class="row">
@@ -637,31 +655,13 @@
               <div class="text-center"><button type="submit">Enviar mensaje</button></div>
             </form>
           </div>
-
         </div>
-
       </div>
-    </section><!-- End Contact Section -->
+    </section>
+  </main>
 
-  </main><!-- End #main -->
-
-  <!-- ======= Footer ======= -->
+  <!-- ======= Fin de la pagina  ======= -->
   <footer id="footer">
-
-    <div class="footer-newsletter">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-6">
-            <h4>Envianos tu correo con tu opinion</h4>
-            <p>Envianos tus opiniones registrando el correo.</p>
-            <form action="" method="post">
-              <input type="email" name="email"><input type="submit" value="Correo">
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="footer-top">
       <div class="container">
         <div class="row">

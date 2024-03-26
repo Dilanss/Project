@@ -23,7 +23,7 @@
                 <i class="fas fa-home"></i>
                 <span class="nav-item">Home</span>
             </a>
-            <a href="">
+            <a href="{{ url_for('Citas')}}">
                 <i class="fas fa-user"></i>
                 <span class="nav-item">Citas</span>
             </a>
@@ -39,7 +39,7 @@
                 <i class="fas fa-tasks"></i>
                 <span class="nav-item">Agregar empleado</span>
             </a>
-            <a href="">
+            <a href="{{ url_for('actualizar_cuenta')}}">
                 <i class="fas fa-cog"></i>
                 <span class="nav-item">Perfil</span>
             </a>
@@ -103,8 +103,8 @@
                                         </div>
                                         <br>
                                         <div class="form-group">
-                                            <label>Precio</label>
-                                            <input name="Precio" type="text" class="form-control" placeholder="Precio del producto" required>
+                                            <label>Precio por unidad:</label>
+                                            <input name="Precio" type="text" class="form-control" placeholder="Precio del producto por unidad" required>
                                         </div>
                                         <br>
                                         <div class="form-group">
@@ -134,7 +134,7 @@
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Cantidad</th>
                                 <th scope="col">Marca</th>
-                                <th scope="col">Precio</th>
+                                <th scope="col">Precio por unidad</th>
                                 <th scope="col">Descripción</th>
                                 <th scope="col">Fecha de vencimiento</th>
                                 <th scope="col">Acciones</th>
@@ -220,58 +220,47 @@
         </div>
 
 
-<!-- Script para el boton de eliminar producto de la linea 144 y mostrar el menu desplegable de la primera linea -->
-<script>
-    function confirmarEliminar(id) {
-        // Mostrar una alerta de confirmación
-        if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
-            // Llamar a la función eliminarProducto si el usuario confirma
-            eliminarProducto(id);
-        } else {
-            // Si el usuario cancela, no hacer nada
-            console.log("Eliminación cancelada por el usuario.");
-        }
-    }
-
-    function eliminarProducto(id) {
-        // Realizar una solicitud GET a la ruta de Flask para eliminar el producto
-        fetch(`/delete/${id}`, {
-            method: 'GET'
-        })
-        .then(response => {
-            if (response.ok) {
-                // Recargar la página después de eliminar el producto
-                location.reload();
-            } else {
-                console.error('Error al eliminar el producto.');
+        <!-- Script para el boton de eliminar producto de la linea 144 y mostrar el menu desplegable de la primera linea -->
+        <script>
+            function confirmarEliminar(id) {
+                // Mostrar una alerta de confirmación
+                if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+                    // Llamar a la función eliminarProducto si el usuario confirma
+                    eliminarProducto(id);
+                } else {
+                    // Si el usuario cancela, no hacer nada
+                    console.log("Eliminación cancelada por el usuario.");
+                }
             }
-        })
-        .catch(error => {
-            console.error('Error de red:', error);
-        });
-    }
 
-    function mostrarLista() {
-        var lista = document.getElementById("listaInventario");
-        if (lista.style.display === "block") {
-            lista.style.display = "none";
-        } else {
-            lista.style.display = "block";
-        }
-    }
+            function eliminarProducto(id) {
+                // Realizar una solicitud GET a la ruta de Flask para eliminar el producto
+                fetch(`/delete/${id}`, {
+                    method: 'GET'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Recargar la página después de eliminar el producto
+                        location.reload();
+                    } else {
+                        console.error('Error al eliminar el producto.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de red:', error);
+                });
+            }
 
-    window.onload = function () {
-        if (window.history && window.history.pushState) {
-            window.history.pushState('forward', null, './#');
-            window.onpopstate = function () {
-                // Aquí puedes realizar la acción de cerrar la sesión
-                // Por ejemplo, redirigir al usuario a la página de logout
-                window.location.href = "{{ url_for('logout') }}";
-            };
-        }
-    };
-        
-</script>
+            function mostrarLista() {
+                var lista = document.getElementById("listaInventario");
+                if (lista.style.display === "block") {
+                    lista.style.display = "none";
+                } else {
+                    lista.style.display = "block";
+                }
+            }
+            
+        </script>
 
 <!-- Estilos al final de la pagina para el js -->
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>    

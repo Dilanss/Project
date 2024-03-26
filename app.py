@@ -10,7 +10,7 @@ app.secret_key = 'your_secret_key'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'login'
+app.config['MYSQL_DB'] = 'AngieStudio'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 # Configuracion para enviar correos
@@ -130,10 +130,34 @@ def Citas():
     cursor.execute("SELECT nombre FROM usuarios WHERE id_rol = 2")
     empleados = cursor.fetchall()
     empleados_servicios = [empleado['nombre'] for empleado in empleados]
+    
+    # Consulta para obtener nombres de servicios
+    cursor.execute("SELECT nombre FROM servicios")
+    servicios = cursor.fetchall()
+    nombres_servicios = [servicio['nombre'] for servicio in servicios]
 
     cursor.close()
 
-    return render_template("Citas.html", nombres_servicios=nombres_servicios, empleados_servicios=empleados_servicios, citas=citas, nombre=session.get('nombre'))
+    return render_template("Citas.html", nombres_servicios=nombres_servicios, empleados_servicios=empleados_servicios, citas=citas, nombre=session.get('nombre'), lista_servicios=nombres_servicios)
+
+
+@app.route('/agregar_servicio', methods=['POST'])
+def agregar_servicio():
+    if request.method == 'POST':
+        nombre_servicio = request.form['nombre_servicio']
+        empleado = request.form['empleados_nombre']
+
+        # Insertar el nuevo servicio en la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO servicios (nombre, empleado) VALUES (%s, %s)", (nombre_servicio, empleado))
+        mysql.connection.commit()
+        cur.close()
+
+        flash("Nuevo servicio agregado correctamente.")
+        return redirect(url_for('Citas'))
+    else:
+        flash("Error al agregar el nuevo servicio.")
+        return redirect(url_for('Citas'))
 
 # Función para cerrar sesión
 @app.route('/logout')
@@ -335,7 +359,7 @@ def Novedades():
     
     return render_template('Novedades.html', entradas=entradas_data, salidas=salidas_data, nombre=session.get('nombre'))
 
-# Citas
+# --------------------------------------------------------Registrar Citas
 @app.route('/Registrar_Cita', methods=["GET", "POST"])
 def Registrar_Cita():
     if request.method == "POST":
@@ -392,6 +416,7 @@ def Registrar_Cita():
 
     return render_template("Citas.html", nombre=session.get('nombre'))
 
+# ---------------------------------------------------Funcion pora eliminar cita
 @app.route('/eliminar_cita/<int:cita_id>', methods=["GET"])
 def eliminar_cita(cita_id):
     try:
@@ -407,6 +432,7 @@ def eliminar_cita(cita_id):
 
     return redirect(url_for('Citas'))
 
+# -----------------------------------------Funcion para pedir el correo para el restablecimiento de contraseña
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot():
     error = None
@@ -415,18 +441,17 @@ def forgot():
             
         session['reset_email'] = user_email
         send_reset_email(user_email)
-        flash('Se ha enviado el link para recuperar la contraseña a tu correo electrónico.', 'success')
         return redirect(url_for('login'))
     return render_template('forgot.html', error=error)
 
-# Función para enviar el correo electrónico con el enlace de restablecimiento de contraseña
+# -----------------------Función para enviar el correo electrónico con el enlace de restablecimiento de contraseña
 def send_reset_email(user_email):
     reset_link = url_for('newpassword', _external=True)
     msg = Message('Recuperación de contraseña', sender='dilanyarce22@gmail.com', recipients=[user_email])
     msg.body = f'Para restablecer tu contraseña, haz clic en el siguiente enlace: {reset_link}'
     mail.send(msg)
 
-# Ruta para restablecer la contraseña
+# -----------------------------------------------------Ruta para restablecer la contraseña
 @app.route('/newpassword', methods=['GET', 'POST'])
 def newpassword():
     error = None
@@ -438,13 +463,12 @@ def newpassword():
             new_password = request.form['newpass']
             if update_password_in_database(user_email, new_password):
                 session.pop('reset_email', None)
-                flash('Contraseña restablecida exitosamente. Inicia sesión con tu nueva contraseña.', 'success')
                 return redirect(url_for('login'))
             else:
                 error = 'Error al actualizar la contraseña. Por favor, inténtalo de nuevo.'
     return render_template('newpassword.html', error=error)
 
-# Función para actualizar la contraseña en la base de datos
+#---------------------------------------- Función para actualizar la contraseña en la base de datos
 def update_password_in_database(user_email, new_password):
     try:
         cur = mysql.connection.cursor()
@@ -455,6 +479,41 @@ def update_password_in_database(user_email, new_password):
     except Exception as e:
         print("Error al actualizar la contraseña:", e)
         return False
+    
+#------------------------------------------------------------------ Actualizar cuenta
+@app.route('/actualizar-cuenta', methods=['GET', 'POST'])
+def actualizar_cuenta():
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        nuevo_nombre = request.form['txtNombre']
+        nuevo_apellido = request.form['txtApellido']
+        nuevo_correo = request.form['txtCorreo']
+        nuevo_telefono = request.form['txtTelefono']
+        nueva_contrasena = request.form['txtPassword']
+        confirmar_contrasena = request.form['txtConfirmPassword']
+
+        # Validar que las contraseñas coincidan
+        if nueva_contrasena != confirmar_contrasena:
+            flash('Las contraseñas no coinciden. Inténtalo de nuevo.', 'error')
+            return redirect(url_for('actualizar_cuenta'))
+
+        # Actualizar los datos en la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE usuarios SET nombre = %s, apellido = %s, correo = %s, telefono = %s, password = %s WHERE id = %s",
+                    (nuevo_nombre, nuevo_apellido, nuevo_correo, nuevo_telefono, nueva_contrasena, session['id']))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Información de la cuenta actualizada correctamente.', 'success')
+        return redirect(url_for('actualizar_cuenta'))
+
+    # Obtener los datos actuales del usuario
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE id = %s", (session['id'],))
+    usuario = cur.fetchone()
+    cur.close()
+
+    return render_template('Cambiar_perfil.html', usuario=usuario)
     
 if __name__ == "__main__":
     app.run(debug=True)

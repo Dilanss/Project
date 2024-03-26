@@ -39,7 +39,7 @@
                     <i class="fas fa-chart-bar"></i>
                     <span class="nav-item">Catalogo</span>
                 </a>
-                <a href="">
+                <a href="{{ url_for('actualizar_cuenta')}}">
                     <i class="fas fa-cog"></i>
                     <span class="nav-item">Perfil</span>
                 </a>
@@ -59,87 +59,6 @@
                     <h2>Lista de sus citas</h2>
                 {% endif %}
             </section>
-            <br>
-            {% if session['id_rol'] != 2 %}
-            <!-- Mostrar el botón de agregar cita solo si el usuario no es un empleado -->
-            <section>
-                <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">Agregar nueva cita</a>
-            </section>
-            {% endif %}
-
-            <!-- Resto del contenido de la página -->
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-success alert-dismissable" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {{ message }}
-            </div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
-            <br>
-            <!-- Modal para agregar producto -->
-            <div id="myModal" class="modal fade" role="dialog">
-                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            {% if session['id_rol'] == 2 %}
-                                {% else %}
-                                <h5 class="modal-title text-primary">Ingresa una nueva cita</h5> 
-                            {% endif %}
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ url_for('Registrar_Cita') }}" method="POST">
-                                <div class="form-group">
-                                    <label for="correo">Nombre:</label>
-                                    <input type="text" name="nombre" class="form-control" id="nombre" required>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <label for="Servicio">Servicio:</label>
-                                    <select name="servicio" class="form-select" required>
-                                        <option value="" selected>Selecciona el servicio</option>
-                                        {% for servicio in nombres_servicios %}
-                                            <option value="{{ servicio }}">{{ servicio }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <label for="empleados_nombre">Empleado:</label>
-                                    <select name="empleados_nombre" class="form-control" id="empleados_nombre" required>
-                                        <option value="">Seleccione un empleado</option>
-                                        {% for empleado in empleados_servicios %}
-                                            <option value="{{ empleado }}">{{ empleado }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <label for="Fecha">Fecha:</label>
-                                    <input type="date" name="Fecha" class="form-control" id="Fecha" required>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <label for="Hora">Hora:</label>
-                                    <input type="time" name="Hora" class="form-control" id="Hora" required>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                    <label for="Motivo">Motivo:</label>
-                                    <textarea name="motivo" required></textarea><br>
-                                </div>
-                                <br>
-                                <button type="submit" class="btn btn-primary">Agendar</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -248,6 +167,150 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% if session['id_rol'] == 1 %}
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalListaServicios">
+                    Ver lista de servicios
+                </button>
+            {% endif %}
+            <div class="modal fade" id="modalListaServicios" tabindex="-1" role="dialog" aria-labelledby="modalListaServiciosLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="modalListaServiciosLabel">Lista de Servicios</h5>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                    <ul>
+                        {% for servicio in lista_servicios %}
+                        <li>{{ servicio }}</li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            {% if session['id_rol'] == 1 %}
+                <section>
+                    <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#modalAgregarServicio">Agregar nuevo servicio</a>
+                </section>
+            {% endif %}
+            <div id="modalAgregarServicio" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agregar nuevo servicio</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('agregar_servicio') }}" method="POST">
+                                <div class="form-group">
+                                    <label for="nombre_servicio">Nombre del Servicio:</label>
+                                    <input type="text" name="nombre_servicio" class="form-control" id="nombre_servicio" required>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="empleados_nombre">Empleado:</label>
+                                    <select name="empleados_nombre" class="form-control" id="empleados_nombre" required>
+                                        <option value="">Seleccione un empleado</option>
+                                        {% for empleado in empleados_servicios %}
+                                            <option value="{{ empleado }}">{{ empleado }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Agregar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            {% if session['id_rol'] != 2 %}
+            <section>
+                <a href="#" class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">Agregar nueva cita</a>
+            </section>
+            {% endif %}
+
+            <!-- Resto del contenido de la página -->
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissable" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <br>
+            <!-- Modal para agregar producto -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            {% if session['id_rol'] == 2 %}
+                                {% else %}
+                                <h5 class="modal-title text-primary">Ingresa una nueva cita</h5> 
+                            {% endif %}
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('Registrar_Cita') }}" method="POST">
+                                <div class="form-group">
+                                    <label for="correo">Nombre:</label>
+                                    <input type="text" name="nombre" class="form-control" id="nombre" required>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Servicio">Servicio:</label>
+                                    <select name="servicio" class="form-select" required>
+                                        <option value="" selected>Selecciona el servicio</option>
+                                        {% for servicio in nombres_servicios %}
+                                            <option value="{{ servicio }}">{{ servicio }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="empleados_nombre">Empleado:</label>
+                                    <select name="empleados_nombre" class="form-control" id="empleados_nombre" required>
+                                        <option value="">Seleccione un empleado</option>
+                                        {% for empleado in empleados_servicios %}
+                                            <option value="{{ empleado }}">{{ empleado }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Fecha">Fecha:</label>
+                                    <input type="date" name="Fecha" class="form-control" id="Fecha" required>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Hora">Hora:</label>
+                                    <input type="time" name="Hora" class="form-control" id="Hora" required>
+                                </div>
+                                <br>
+                                <div class="form-group">
+                                    <label for="Motivo">Motivo:</label>
+                                    <textarea name="motivo" required></textarea><br>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Agendar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
         </main>
 
         <script>
@@ -274,8 +337,6 @@
                     console.error('Error de red:', error);
                 });
             }
-            
-            
             
         </script>
         

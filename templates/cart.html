@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<div class="container">
+    <h3>Shopping Cart</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Product</th>
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart.items %}
+            <tr>
+                <td>{{ item.product_id }}</td>
+                {% if item.product %}
+                    <td>{{ item.product.title }}</td>
+                    <td>${{ item.product.price }}</td>
+                {% else %}
+                    <td>Unknown</td>
+                    <td>N/A</td>
+                {% endif %}
+                <td>{{ item.quantity }}</td>
+                {% if item.product %}
+                    <td>${{ item.product.price * item.quantity }}</td>
+                {% else %}
+                    <td>N/A</td>
+                {% endif %}
+                <td>
+                    <form action="{{ url_for('remove_from_cart', id=item.product_id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+

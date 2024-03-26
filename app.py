@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, url_for, flash, session, redirect
 from flask_mysqldb import MySQL
-from flask_mail import Mail
-from flask_mail import Message
+from flask_mail import Mail, Message
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -13,7 +14,7 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'login'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# Configuracion para enviar correos
+# Configuración para enviar correos
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'dilanyarce22@gmail.com'  
@@ -25,11 +26,21 @@ mail = Mail(app)
 
 mysql = MySQL(app)
 
+app.config['UPLOAD_FOLDER'] = 'static/img'
+
 # Rutas y funciones para la primera aplicación
 # Ruta para cuando se inicialice el programa se inicie desde el index.html
 @app.route('/')
 def home():
     return render_template("index.html")
+
+@app.route('/Home_Catalogo')
+def Home_Catalogo():
+    return render_template('home.html')
+
+@app.route('/products_action')
+def products_action():
+    return render_template('product_actions.html')
 
 # Funcion del login para inicar sesion
 @app.route('/acceso-login', methods=["GET", "POST"])
@@ -78,6 +89,33 @@ def Cliente():
 @app.route('/Redirigir_Empleado')
 def Redirigir_Empleado():
     return render_template("Registrar_Empleado.html", nombre=session.get('nombre'))
+
+@app.route('/products', methods=['GET', 'POST'])
+def create_product():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        price = request.form.get('price')
+
+        # Guardar la imagen en el servidor
+        image = request.files['image']
+        filename = secure_filename(image.filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image.save(image_path)
+
+        # Construir la ruta completa de la imagen
+        full_image_path = url_for('static', filename='uploads/' + filename)
+
+        # Insertar los datos en la base de datos
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO product (title, description, price, image_path) VALUES (%s, %s, %s, %s)", 
+                    (title, description, price, full_image_path)) 
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Producto creado exitosamente', 'success')
+        return redirect(url_for('Home_Catalogo'))
+    return render_template('create_product.html')
 
 #Redirigir al template de Citas.html
 @app.route('/Citas', methods=['GET', 'POST'])
@@ -162,10 +200,7 @@ def crear_registro():
                     (correo, password, nombre, apellido, telefono, '3'))
         mysql.connection.commit()
         cur.close()
-        url_for('static', filename='style.css')
         return render_template("login.html")
-    else:
-        pass
 
 # Función para crear Empleados
 @app.route('/Registrar_Empleado', methods=["GET", "POST"])

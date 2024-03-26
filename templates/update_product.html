@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Update Product{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="mt-5 mb-3">Update Product</h1>
+    <form action="{{ url_for('update_product', id=product.id) }}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ product.title }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3" required>{{ product.description }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price" value="{{ product.price }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+        </div>
+        <div class="mb-3">
+            <label>Current Image</label>
+            <img src="{{ url_for('static', filename=product.image_path) }}" class="img-fluid" alt="Product Image">
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+{% endblock %}

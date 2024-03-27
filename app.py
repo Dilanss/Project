@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 from flask_mail import Mail
 from flask_mail import Message
 from werkzeug.utils import secure_filename
-import os
+import os, re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -51,12 +51,12 @@ def login():
             session['id_rol'] = account['id_rol']  
             session['nombre'] = account['nombre']  
 
-        if session['id_rol'] == 1:
-            return render_template("Administrador.html", nombre=session['nombre'])
-        elif session['id_rol'] == 2:
-            return render_template("Empleado.html", nombre=session['nombre'])
-        elif session['id_rol'] == 3:
-            return render_template("Cliente.html", nombre=session['nombre'])
+            if session['id_rol'] == 1:
+                return render_template("Administrador.html", nombre=session['nombre'])
+            elif session['id_rol'] == 2:
+                return render_template("Empleado.html", nombre=session['nombre'])
+            elif session['id_rol'] == 3:
+                return render_template("Cliente.html", nombre=session['nombre'])
         else:
             return render_template('login.html', mensaje="¡Usuario o contraseña incorrectas!")
 
@@ -80,7 +80,12 @@ def Cliente():
 # Redireccion al template de registrar empleado
 @app.route('/Redirigir_Empleado')
 def Redirigir_Empleado():
-    return render_template("Registrar_Empleado.html", nombre=session.get('nombre'))
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM usuarios WHERE id_rol = 2")
+    empleados = cur.fetchall()
+    cur.close()
+    return render_template("Registrar_Empleado.html", empleados=empleados, nombre=session.get('nombre'))
+
 
 #Redirigir al template de Citas.html
 @app.route('/Citas', methods=['GET', 'POST'])
@@ -214,9 +219,9 @@ def Registrar_Empleado():
         #Listar empleado en la tabla
         cur = mysql.connection.cursor()
         cur.execute("SELECT * FROM usuarios WHERE id_rol = 2")
-        empleados_data = cur.fetchall()
+        empleados = cur.fetchall()  
         cur.close()
-        return render_template("Registrar_Empleado.html", empleados=empleados_data, nombre=session.get('nombre'))
+        return render_template("Registrar_Empleado.html", empleados=empleados, nombre=session.get('nombre'))  
 
 # Función del inventario para seleccionar los productos y los campos
 @app.route('/inventario')

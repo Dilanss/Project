@@ -77,41 +77,34 @@
                     <!-- Inicio del modal para agregar el producto -->
                     <!-- Modal -->
                     <div id="myModal" class="modal fade" role="dialog">
-                        <div class="modal-dialog modal-dialog-centered modal-lg" style="margin: auto;">
+                        <div class="modal-dialog modal-dialog-centered" style="max-width: 500px; margin: 0 auto;">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title text-primary">Ingresa un nuevo producto</h5>  
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ url_for('insert') }}" method="POST">
                                         <div class="form-group">
-                                            <label>Nombre</label>
+                                            <label>Nombre del producto:</label>
                                             <input type="text" name="Nombre" class="form-control" placeholder="Nombre del producto" required>
                                         </div>
-                                        <br>
                                         <div class="form-group">
-                                            <label>Cantidad</label>
+                                            <label>Cantidad:</label>
                                             <input type="text" name="Cantidad" class="form-control" placeholder="Cantidad" required>
                                         </div>
-                                        <br>
                                         <div class="form-group">
-                                            <label>Marca</label>
+                                            <label>Marca:</label>
                                             <input name="Marca" type="text" class="form-control" placeholder="Marca del producto" required>
                                         </div>
-                                        <br>
                                         <div class="form-group">
                                             <label>Precio por unidad:</label>
                                             <input name="Precio" type="text" class="form-control" placeholder="Precio del producto por unidad" required>
                                         </div>
-                                        <br>
                                         <div class="form-group">
                                             <label>Descripción</label>
                                             <textarea name="Descripcion" type="text" class="form-control" placeholder="Descripcion del producto" required></textarea>
                                         </div>
-                                        <br>
                                         <div class="form-group">
                                             <label>Fecha de vencimiento</label>
                                             <input name="Fecha_vencimiento" type="date" class="form-control" placeholder="Fecha de vencimiento" required>
@@ -157,10 +150,10 @@
                             </tr>
                             <!-- Modal -->
                             <div id="modaledit{{ producto['Id'] }}" class="modal fade" role="dialog">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-dialog-centered" role="document" style="margin: 0 auto;">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title text-primary" style="align-content: center;">Detalles del producto para editar</h5>    
+                                            <h5 class="modal-title text-primary">Detalles del producto para editar</h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
@@ -170,7 +163,7 @@
                                                 <input type="hidden" name="Id" value="{{ producto['Id'] }}">
                                                 <div class="form-group">
                                                     <label>Nombre</label>
-                                                    <input value="{{ producto['Nombre'] }}" type="text" name="Nombre" class="form-control" id="exampleFormControlInput1" placeholder="Nombre" required>
+                                                    <input value="{{ producto['Nombre'] }}" type="text" name="Nombre" class="form-control" placeholder="Nombre" required>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Cantidad</label>
@@ -210,11 +203,11 @@
         <div class="container">
             <div class="column">
                 <div class="col-sm-8">
-                    <a href="{{ url_for('Entradas') }}"  class="btn">Ver entradas</a>
+                    <a href="{{ url_for('Entradas') }}" class="btn btn-primary">Ver entradas</a>
                     <br><br>
-                    <a href="{{ url_for('Salidas') }}"  class="btn">Ver salidas</a>
+                    <a href="{{ url_for('Salidas') }}" class="btn btn-primary">Ver salidas</a>
                     <br><br>
-                    <a href="{{ url_for('Novedades') }}"  class="btn">Ver Novedades</a>
+                    <a href="{{ url_for('Novedades') }}" class="btn btn-primary">Ver Novedades</a>
                 </div>
             </div>
         </div>

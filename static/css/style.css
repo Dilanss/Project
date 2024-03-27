@@ -2173,7 +2173,7 @@
 }
 
 #Registro .form label input{
-    width: 100%;
+    width: 316px;
     padding: 10px;
     background-color: #fff;
     border: none;
@@ -2767,28 +2767,16 @@ line-height:200px;
 }
 
 /* Botones del inventario para redirigir a la entrada, salida y novedades */
-#Inventario .column a {
-  background-color: #FFBCBF;
-  color: black;
+/* #Inventario .column a {
+  background-color: #007bffBF;
+  color: white;
   transition: 0.5s;
 }
 
 #Inventario .column a:hover {
   background-color: #c26bba;
-  color: white;
-}
-
-/* Botones del inventario para redirigir a la entrada, salida y novedades */
-#Inventario .column a {
-  background-color: #FFBCBF;
-  color: black;
-  transition: 0.5s;
-}
-
-#Inventario .column a:hover {
-  background-color: #c26bba;
-  color: white;
-}
+  color: rgb(41, 36, 36);
+} */
 
 /* ----------------------------------------------------------- Entrada de productos */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700");

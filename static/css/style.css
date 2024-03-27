@@ -1831,9 +1831,6 @@
     align-items: center;
     justify-content: center;
     height: 90vh;
-    /* background-image: url(https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80);
-    background-size: cover;
-    backdrop-filter: blur(5px); */
     background: radial-gradient( #FFBCBF, #F394C3);
 }
 
@@ -2766,17 +2763,6 @@ line-height:200px;
   bottom: 10px;
 }
 
-/* Botones del inventario para redirigir a la entrada, salida y novedades */
-/* #Inventario .column a {
-  background-color: #007bffBF;
-  color: white;
-  transition: 0.5s;
-}
-
-#Inventario .column a:hover {
-  background-color: #c26bba;
-  color: rgb(41, 36, 36);
-} */
 
 /* ----------------------------------------------------------- Entrada de productos */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700");

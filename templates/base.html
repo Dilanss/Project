@@ -10,7 +10,11 @@
 <body id="Base">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/">Angie Studios</a>
+          <a href="{% if 'logueado' in session and session['logueado'] %}{% if session.get('id_rol') == 1 %}{{ url_for('admin') }}{% elif session.get('id_rol') == 2 %}{{ url_for('Empleado') }}{% elif session.get('id_rol') == 3 %}{{ url_for('Cliente') }}{% endif %}{% else %}{{ url_for('home') }}{% endif %}">
+            <i class="fas fa-home"></i>
+            <span class="nav-item">Angie Studio</span>
+        </a>
+        <br>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -19,9 +23,13 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="{{ url_for('Home_Catalogo')}}">Inicio</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/product_actions">Administrar productos</a>
-              </li>
+              {% if 'logueado' in session and session['logueado'] %}
+                {% if session.get('id_rol') != 3 %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="/product_actions">Administrar productos</a>
+                  </li>
+                {% endif %}
+              {% endif %}
               <li class="nav-item">
                 <a class="nav-link" href="/cart">Carrito</a>
               </li>

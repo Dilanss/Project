@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, url_for, flash, session, redi
 from flask_mysqldb import MySQL
 from flask_mail import Mail
 from flask_mail import Message
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -12,6 +14,7 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'AngieStudio'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['UPLOAD_FOLDER'] = 'static/img'
 
 # Configuracion para enviar correos
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -514,6 +517,166 @@ def actualizar_cuenta():
     cur.close()
 
     return render_template('Cambiar_perfil.html', usuario=usuario)
+
+# ---------------------------------------------------- Catalogo
+@app.route('/Home_Catalogo')
+def Home_Catalogo():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM product WHERE active = 1")
+    products = cur.fetchall()
+    cur.close()
+    return render_template('home.html', products=products)
+
+@app.route('/add_to_cart/<int:id>', methods=['POST'])
+def add_to_cart(id):
+    product_id = id
+
+    # Verificar si 'cart' ya está en la sesión
+    if 'cart' not in session:
+        session['cart'] = {}
+
+    # Verificar si el producto ya está en el carrito
+    if str(product_id) in session['cart']:
+        # Si el producto ya está en el carrito, aumentar la cantidad en 1
+        session['cart'][str(product_id)] += 1
+    else:
+        # Si el producto no está en el carrito, agregarlo con cantidad 1
+        session['cart'][str(product_id)] = 1
+
+    # Mostrar un mensaje de éxito
+    flash('Producto añadido al carrito exitosamente', 'success')
+
+    # Redirigir de vuelta a la página de inicio
+    return redirect(url_for('Home_Catalogo'))
+
+@app.route('/cart')
+def cart():
+    if 'cart' not in session or len(session['cart']) == 0:
+        flash('No hay productos en el carrito', 'info')
+        return redirect(url_for('Home_Catalogo'))
+    
+    cart_items = []
+    total_price = 0
+    
+    cur = mysql.connection.cursor()
+    for product_id, quantity in session['cart'].items():
+        cur.execute("SELECT * FROM product WHERE id = %s", (int(product_id),))
+        product = cur.fetchone()
+        if product:
+            cart_items.append({'product': product, 'quantity': quantity})
+            total_price += product['price'] * quantity
+    cur.close()
+
+    return render_template('cart.html', cart_items=cart_items, total_price=total_price)
+
+@app.route('/remove_from_cart/<int:id>', methods=['POST'])
+def remove_from_cart(id):
+    product_id = id
+    if 'cart' in session and str(product_id) in session['cart']:
+        session['cart'].pop(str(product_id))
+        flash('Producto removido del carrito exitosamente', 'success')
+    else:
+        flash('El producto no está en el carrito', 'danger')
+    return redirect(url_for('cart'))
+
+# ---------------------- crear productos
+
+@app.route('/products', methods=['GET', 'POST'])
+def create_product():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        
+        # Save the image on the server
+        image = request.files['image']
+        filename = secure_filename(image.filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image.save(image_path)
+
+        # Create the product in the database
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO product (title, description, price, image_path) VALUES (%s, %s, %s, %s)", (title, description, price, image_path))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Producto creado exitosamente', 'success')
+        return redirect(url_for('Home_Catalogo'))
+    return render_template('create_product.html')
+
+# --------------------- borrar productos
+
+@app.route('/products/delete/<int:id>', methods=['GET', 'POST'])
+def delete_product(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM product WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    flash('Producto eliminado exitosamente', 'success')
+    return redirect(url_for('Home_Catalogo'))
+
+# ---------------------------- actualizar producto
+
+@app.route('/products/update/<int:id>', methods=['GET', 'POST'])
+def update_product(id):
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        price = request.form.get('price')
+        image = request.files['image']
+        if image:
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image.save(image_path)
+        else:
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT image_path FROM product WHERE id = %s", (id,))
+            image_path = cur.fetchone()['image_path']
+            cur.close()
+
+        # Update the product in the database
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE product SET title = %s, description = %s, price = %s, image_path = %s WHERE id = %s", (title, description, price, image_path, id))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Producto actualizado exitosamente', 'success')
+        return redirect(url_for('Home_Catalogo'))
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM product WHERE id = %s", (id,))
+    product = cur.fetchone()
+    cur.close()
+    return render_template('update_product.html', product=product)
+
+# ---------------------- boton de activar o descativar
+
+@app.route('/products/activate/<int:id>', methods=['GET', 'POST'])
+def activate_product(id):
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE product SET active = 1 WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    flash('Producto activado exitosamente', 'success')
+    return redirect(url_for('Home_Catalogo'))
+
+@app.route('/products/deactivate/<int:id>', methods=['GET', 'POST'])
+def deactivate_product(id):
+    cur = mysql.connection.cursor()
+    cur.execute("UPDATE product SET active = 0 WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    flash('Producto desactivado exitosamente', 'success')
+    return redirect(url_for('Home_Catalogo'))
+
+# ------------ producto
+
+@app.route('/product_actions')
+def product_actions():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM product")
+    products = cur.fetchall()
+    cur.close()
+    return render_template('product_actions.html', products=products)
     
 if __name__ == "__main__":
     app.run(debug=True)

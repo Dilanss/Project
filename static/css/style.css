@@ -3343,3 +3343,78 @@ line-height:200px;
   position: absolute;
   bottom: 0;
 }
+
+
+/* ---------------------------------------------Estilos para el catalogo */
+#Base .navbar {
+  background-color: #cc9494;
+}
+
+#Base .nav-link {
+  color: #080808; 
+}
+
+#Base .nav-link:hover {
+  color: purple; 
+}
+
+/* Estilos generales */
+#Base .container {
+  margin-top: 20px;
+}
+
+/* Estilos para la lista de productos en la página de inicio */
+#Acciones_Productos .list-unstyled {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-around;
+}
+
+#Acciones_Productos .card {
+width: 300px;
+margin-bottom: 15px;
+}
+
+#Acciones_Productos .card-text {
+height: 20px;
+overflow: hidden;
+}
+
+#Acciones_Productos .card:hover {
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+transition: 0.3s;
+}
+
+#Acciones_Productos .card-title {
+font-size: 25px;
+}
+
+#Productos_Catalogo .card-link {
+color: #28a745; 
+}
+
+#Productos_Catalogo .card-link:hover {
+color: #218838; 
+}
+
+/* Estilos para el botón "Add to Cart" */
+#Carrito .btn-primary {
+background-color: #007bff; 
+border-color: #007bff; 
+}
+
+#Carrito .btn-primary:hover {
+background-color: #0056b3; 
+border-color: #0056b3; 
+}
+
+/* Estilos para el botón de compra */
+#Productos_Catalogo .btn-buy {
+background-color: #28a745; 
+border-color: #28a745; 
+}
+
+#Productos_Catalogo .btn-buy:hover {
+background-color: #218838; 
+border-color: #218838; 
+}
